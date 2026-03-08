@@ -99,6 +99,7 @@ export default function AnalyzePage() {
       sessionStorage.setItem("analysisResults", JSON.stringify(data));
       sessionStorage.setItem("analysisResume", resume);
       sessionStorage.setItem("analysisJD", jobDescription);
+      sessionStorage.setItem("analysisTargetRole", targetRole);
       navigate("/results");
     } catch (err: any) {
       console.error("Analysis error:", err);
