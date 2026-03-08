@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Upload, Briefcase, Loader2, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
+import { FileText, Briefcase, Loader2, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { FileUploadZone } from "@/components/FileUploadZone";
+import { useAuth } from "@/hooks/useAuth";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const DEMO_RESUME = `John Doe
 Software Engineer | 5 years experience
@@ -55,8 +58,10 @@ export default function AnalyzePage() {
   const [jobDescription, setJobDescription] = useState("");
   const [targetRole, setTargetRole] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [jdInputMode, setJdInputMode] = useState<string>("paste");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const loadDemo = () => {
     setResume(DEMO_RESUME);
@@ -79,7 +84,18 @@ export default function AnalyzePage() {
 
       if (error) throw error;
 
-      // Store results in sessionStorage for the results page
+      // Save analysis if user is logged in
+      if (user) {
+        await supabase.from("analyses").insert({
+          user_id: user.id,
+          resume_text: resume,
+          job_description: jobDescription,
+          target_role: targetRole || null,
+          match_score: data.matchScore,
+          results: data,
+        });
+      }
+
       sessionStorage.setItem("analysisResults", JSON.stringify(data));
       sessionStorage.setItem("analysisResume", resume);
       sessionStorage.setItem("analysisJD", jobDescription);
@@ -98,7 +114,6 @@ export default function AnalyzePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
@@ -107,49 +122,68 @@ export default function AnalyzePage() {
             </div>
             ResumeAI
           </Link>
-          <Link to="/">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-1" /> Back
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            {user ? (
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm"><ArrowLeft className="w-4 h-4 mr-1" /> Dashboard</Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">Sign In</Button>
+                </Link>
+                <Link to="/">
+                  <Button variant="ghost" size="sm"><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
       <div className="pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Analyze Your Resume
-            </h1>
-            <p className="text-muted-foreground text-lg mb-4">
-              Paste your resume and job description to get AI-powered insights
-            </p>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Analyze Your Resume</h1>
+            <p className="text-muted-foreground text-lg mb-4">Upload your resume and job description to get AI-powered insights</p>
             <Button variant="outline" size="sm" onClick={loadDemo} className="rounded-full">
               <Sparkles className="w-4 h-4 mr-1" /> Load Demo Data
             </Button>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-6">
+            {/* Resume Upload */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
               <div className="bg-card rounded-2xl p-6 shadow-card h-full">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-lavender flex items-center justify-center">
-                    <Upload className="w-5 h-5 text-foreground" />
+                    <FileText className="w-5 h-5 text-foreground" />
                   </div>
                   <div>
                     <h2 className="font-display font-semibold text-foreground">Resume</h2>
-                    <p className="text-xs text-muted-foreground">Paste your resume content</p>
+                    <p className="text-xs text-muted-foreground">Upload PDF/DOCX or paste text</p>
                   </div>
                 </div>
-                <Textarea
-                  placeholder="Paste your resume text here..."
-                  value={resume}
-                  onChange={(e) => setResume(e.target.value)}
-                  className="min-h-[300px] resize-none rounded-xl border-border bg-muted/30 focus:bg-card transition-colors"
+                <FileUploadZone
+                  label="Drop your resume here"
+                  description="PDF or DOCX, max 20MB"
+                  onTextExtracted={setResume}
+                  extractedText={resume}
+                  colorClass="bg-lavender"
                 />
+                <div className="mt-3">
+                  <p className="text-xs text-muted-foreground mb-1.5">Or paste resume text:</p>
+                  <Textarea
+                    placeholder="Paste your resume text here..."
+                    value={resume}
+                    onChange={(e) => setResume(e.target.value)}
+                    className="min-h-[150px] resize-none rounded-xl border-border bg-muted/30 focus:bg-card transition-colors text-sm"
+                  />
+                </div>
               </div>
             </motion.div>
 
+            {/* Job Description */}
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
               <div className="bg-card rounded-2xl p-6 shadow-card h-full">
                 <div className="flex items-center gap-2 mb-4">
@@ -158,19 +192,38 @@ export default function AnalyzePage() {
                   </div>
                   <div>
                     <h2 className="font-display font-semibold text-foreground">Job Description</h2>
-                    <p className="text-xs text-muted-foreground">Paste the target job description</p>
+                    <p className="text-xs text-muted-foreground">Upload file or paste text</p>
                   </div>
                 </div>
-                <Textarea
-                  placeholder="Paste the job description here..."
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  className="min-h-[300px] resize-none rounded-xl border-border bg-muted/30 focus:bg-card transition-colors"
-                />
+
+                <Tabs value={jdInputMode} onValueChange={setJdInputMode} className="w-full">
+                  <TabsList className="w-full mb-3">
+                    <TabsTrigger value="paste" className="flex-1">Paste Text</TabsTrigger>
+                    <TabsTrigger value="upload" className="flex-1">Upload File</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="paste">
+                    <Textarea
+                      placeholder="Paste the job description here..."
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                      className="min-h-[280px] resize-none rounded-xl border-border bg-muted/30 focus:bg-card transition-colors text-sm"
+                    />
+                  </TabsContent>
+                  <TabsContent value="upload">
+                    <FileUploadZone
+                      label="Drop job description here"
+                      description="PDF or DOCX, max 20MB"
+                      onTextExtracted={setJobDescription}
+                      extractedText={jobDescription}
+                      colorClass="bg-mint"
+                    />
+                  </TabsContent>
+                </Tabs>
               </div>
             </motion.div>
           </div>
 
+          {/* Target Role */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card rounded-2xl p-6 shadow-card mb-8">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-10 h-10 rounded-xl bg-peach flex items-center justify-center">
@@ -189,6 +242,7 @@ export default function AnalyzePage() {
             />
           </motion.div>
 
+          {/* Analyze Button */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-center">
             <Button
               size="lg"
@@ -197,25 +251,21 @@ export default function AnalyzePage() {
               className="rounded-full px-10 text-base shadow-soft"
             >
               {isAnalyzing ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Analyzing...
-                </>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Analyzing...</>
               ) : (
-                <>
-                  Start AI Analysis <ArrowRight className="ml-2 w-4 h-4" />
-                </>
+                <>Start AI Analysis <ArrowRight className="ml-2 w-4 h-4" /></>
               )}
             </Button>
+            {!user && (
+              <p className="text-xs text-muted-foreground mt-3">
+                <Link to="/register" className="text-primary hover:underline">Sign up</Link> to save your analyses
+              </p>
+            )}
           </motion.div>
 
           <AnimatePresence>
             {isAnalyzing && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="mt-10 text-center"
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-10 text-center">
                 <div className="bg-card rounded-2xl p-8 shadow-card max-w-md mx-auto">
                   <div className="w-16 h-16 rounded-full bg-lavender flex items-center justify-center mx-auto mb-4 animate-pulse-soft">
                     <Sparkles className="w-8 h-8 text-primary" />

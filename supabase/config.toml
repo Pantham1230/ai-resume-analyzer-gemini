@@ -2,3 +2,6 @@ project_id = "hnjevncqctokcozzsgmr"
 
 [functions.analyze-resume]
 verify_jwt = false
+
+[functions.parse-resume]
+verify_jwt = false

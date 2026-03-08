@@ -42,7 +42,10 @@ export default function LandingPage() {
             <Link to="/analyze">
               <Button variant="ghost" size="sm">Try Demo</Button>
             </Link>
-            <Link to="/analyze">
+            <Link to="/login">
+              <Button variant="outline" size="sm">Login</Button>
+            </Link>
+            <Link to="/register">
               <Button size="sm">Get Started</Button>
             </Link>
           </div>
@@ -65,9 +68,9 @@ export default function LandingPage() {
               Understand how well your resume matches your dream job. Get AI-powered insights, skill gap analysis, and free learning resources.
             </motion.p>
             <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/analyze">
+              <Link to="/register">
                 <Button size="lg" className="rounded-full px-8 text-base shadow-soft">
-                  Analyze My Resume <ArrowRight className="ml-2 w-4 h-4" />
+                  Get Started <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
               <Link to="/analyze">
