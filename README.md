@@ -1,73 +1,110 @@
-# Welcome to your Lovable project
+# AI Resume Analyzer 🚀
 
-## Project info
+An AI-powered career assistant that analyzes resumes against job descriptions and provides actionable feedback to improve job matching.
+This tool helps job seekers understand how well their resume aligns with a specific job role and suggests improvements using AI.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🌐 Live Demo
+🎥 Demo Video: [PASTE_YOUR_VIDEO_LINK_HERE](https://drive.google.com/file/d/1TwnYBoz8qVQ8gbUUJ354uH8AM9PEPs3a/view?usp=drivesdk)
 
-## How can I edit this code?
+## 📌 Features
+### 📄 Resume Parsing
+- Upload **PDF or DOCX resumes**
+- Automatic text extraction and analysis
+- Drag-and-drop resume upload
+### 🤖 AI-Powered Resume Analysis
+- Semantic analysis using **Google Gemini AI**
+- Understands synonyms, abbreviations, and contextual skills
+- Compares resume with job descriptions
+### 📊 Explainable Match Score
+Resume-job compatibility score based on:
+- Skill Match (40%)
+- Experience Relevance (20%)
+- Projects (15%)
+- Education (10%)
+- ATS Keywords (15%)
+### 🧠 Skill Extraction
+Extracts and categorizes skills into:
+- Programming
+- AI/ML
+- Tools & Frameworks
+- Databases
+- Soft Skills
+### ✏️ AI Resume Bullet Rewriter
+Improve weak resume bullet points automatically.
+Example:
+Before: Worked on machine learning project
+After: Developed a machine learning model using Python and Scikit-learn, improving prediction accuracy by 18%.
+### 📈 Resume Section Evaluation
+Analyzes individual sections:
+- Skills
+- Projects
+- Work Experience
+- Education
+- Achievements
+Each section receives:
+- Strength rating
+- Improvement suggestions
+### 🧾 ATS Optimization Insights
+Provides suggestions to improve compatibility with Applicant Tracking Systems.
+Shows:
+- Missing keywords
+- Recommended keywords
+- Formatting tips
+### 🎯 Career Path Recommendations
+Suggests job roles best suited for the user's resume, such as:
+- AI Engineer
+- Machine Learning Engineer
+- Data Scientist
+- NLP Engineer
+### 📚 Learning Resources
+For missing skills, the system recommends free courses from:
+- Coursera
+- edX
+- freeCodeCamp
+- YouTube
+- Google Cloud Skills Boost
+### 📄 Downloadable Report
+Users can export the analysis as a **PDF report**.
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
+## 🏗️ Tech Stack
+### Frontend
 - React
-- shadcn-ui
+- TypeScript
 - Tailwind CSS
+- Framer Motion
+- Recharts
+- shadcn/ui
+### Backend
+- Lovable Cloud Edge Functions
+### AI Engine
+- Google Gemini
+### Database
+- PostgreSQL
+### Authentication
+- Email & Password Authentication
 
-## How can I deploy this project?
+## 🔐 Security & Privacy
+- Resume files are processed securely
+- Files are not stored permanently unless the user saves the analysis
+- Database access protected with row-level security policies
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## 🚀 How to Run Locally
+Clone the repository: git clone https://github.com/Pantham1230/ai-resume-analyzer-gemini
+Navigate into the project: cd ai-resume-analyzer-gemini
+Install dependencies: npm install
+Run the development server: npm run dev
 
-## Can I connect a custom domain to my Lovable project?
+## 🎯 Future Improvements
+- Resume comparison analysis
+- More advanced ATS scoring
+- AI-powered resume builder
+- Dark mode support
 
-Yes, you can!
+## 👩‍💻 Author
+**Bhavya Pantham**
+AI/ML Student  
+Sridevi Women's Engineering College
+LinkedIn: https://www.linkedin.com/in/panthambhavya/ 
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## ⭐ Acknowledgement
+Built using **Lovable AI** during the Women's Day free access event.
