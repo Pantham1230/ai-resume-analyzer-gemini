@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.parse-resume]
 verify_jwt = false
+
+[functions.rewrite-bullet]
+verify_jwt = false
