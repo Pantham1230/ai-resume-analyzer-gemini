@@ -114,6 +114,15 @@ export default function RegisterPage() {
             </Button>
           </form>
 
+          {showLoginLink && (
+            <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
+              <p className="text-sm text-destructive font-medium mb-2">This email is already registered.</p>
+              <Button variant="outline" size="sm" className="rounded-xl" onClick={() => navigate("/login")}>
+                Go to Login
+              </Button>
+            </div>
+          )}
+
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
