@@ -17,6 +17,8 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const [showLoginLink, setShowLoginLink] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !fullName) return;
@@ -25,10 +27,16 @@ export default function RegisterPage() {
       return;
     }
     setLoading(true);
+    setShowLoginLink(false);
     const { error } = await signUp(email, password, fullName);
     setLoading(false);
     if (error) {
-      toast({ title: "Registration failed", description: error.message, variant: "destructive" });
+      if (error.message.includes("User already registered")) {
+        toast({ title: "Email already registered", description: "This email is already registered. Please log in instead.", variant: "destructive" });
+        setShowLoginLink(true);
+      } else {
+        toast({ title: "Registration failed", description: error.message, variant: "destructive" });
+      }
     } else {
       toast({ title: "Check your email", description: "We sent a verification link to your email address." });
       navigate("/login");
@@ -105,6 +113,15 @@ export default function RegisterPage() {
               Create Account
             </Button>
           </form>
+
+          {showLoginLink && (
+            <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
+              <p className="text-sm text-destructive font-medium mb-2">This email is already registered.</p>
+              <Button variant="outline" size="sm" className="rounded-xl" onClick={() => navigate("/login")}>
+                Go to Login
+              </Button>
+            </div>
+          )}
 
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-muted-foreground">
