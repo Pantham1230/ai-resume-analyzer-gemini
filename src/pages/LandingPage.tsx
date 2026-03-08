@@ -42,7 +42,10 @@ export default function LandingPage() {
             <Link to="/analyze">
               <Button variant="ghost" size="sm">Try Demo</Button>
             </Link>
-            <Link to="/analyze">
+            <Link to="/login">
+              <Button variant="outline" size="sm">Login</Button>
+            </Link>
+            <Link to="/register">
               <Button size="sm">Get Started</Button>
             </Link>
           </div>
