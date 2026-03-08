@@ -17,6 +17,8 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const [showLoginLink, setShowLoginLink] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !fullName) return;
@@ -25,10 +27,16 @@ export default function RegisterPage() {
       return;
     }
     setLoading(true);
+    setShowLoginLink(false);
     const { error } = await signUp(email, password, fullName);
     setLoading(false);
     if (error) {
-      toast({ title: "Registration failed", description: error.message, variant: "destructive" });
+      if (error.message.includes("User already registered")) {
+        toast({ title: "Email already registered", description: "This email is already registered. Please log in instead.", variant: "destructive" });
+        setShowLoginLink(true);
+      } else {
+        toast({ title: "Registration failed", description: error.message, variant: "destructive" });
+      }
     } else {
       toast({ title: "Check your email", description: "We sent a verification link to your email address." });
       navigate("/login");
