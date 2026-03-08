@@ -18,12 +18,53 @@ serve(async (req) => {
 You MUST respond with ONLY a valid JSON object (no markdown, no code blocks) with this exact structure:
 {
   "matchScore": <number 0-100>,
+  "scoreBreakdown": {
+    "skillMatch": {"score": <0-40>, "maxScore": 40, "details": "explanation"},
+    "experienceRelevance": {"score": <0-20>, "maxScore": 20, "details": "explanation"},
+    "projects": {"score": <0-15>, "maxScore": 15, "details": "explanation"},
+    "education": {"score": <0-10>, "maxScore": 10, "details": "explanation"},
+    "atsKeywordPresence": {"score": <0-15>, "maxScore": 15, "details": "explanation"}
+  },
+  "extractedSkills": {
+    "programming": ["skill1", "skill2"],
+    "aiMl": ["skill1"],
+    "toolsFrameworks": ["skill1"],
+    "databases": ["skill1"],
+    "softSkills": ["skill1"],
+    "other": ["skill1"]
+  },
   "matchingSkills": ["skill1", "skill2"],
   "missingSkills": ["skill1", "skill2"],
   "irrelevantContent": ["description of irrelevant section 1"],
   "strengths": ["strength 1", "strength 2"],
   "weaknesses": ["weakness 1", "weakness 2"],
   "suggestions": ["actionable suggestion 1", "actionable suggestion 2"],
+  "sectionEvaluation": [
+    {
+      "section": "Skills",
+      "strength": "Strong|Moderate|Needs Improvement",
+      "feedback": "detailed feedback",
+      "suggestions": ["suggestion 1"]
+    }
+  ],
+  "weakBulletPoints": [
+    {
+      "original": "weak bullet text from resume",
+      "section": "which section it's from"
+    }
+  ],
+  "atsOptimization": {
+    "missingKeywords": ["keyword1"],
+    "suggestedKeywords": ["keyword1"],
+    "formattingTips": ["tip1", "tip2"]
+  },
+  "careerPaths": [
+    {
+      "role": "Job Title",
+      "matchPercentage": 85,
+      "explanation": "Why this role fits based on skills"
+    }
+  ],
   "learningResources": [
     {
       "skill": "missing skill name",
@@ -40,10 +81,26 @@ You MUST respond with ONLY a valid JSON object (no markdown, no code blocks) wit
     {"category": "Soft Skills", "score": 50},
     {"category": "Projects", "score": 40},
     {"category": "Keywords/ATS", "score": 30}
+  ],
+  "actionPlan": [
+    "Concrete step 1 to improve resume",
+    "Concrete step 2",
+    "Concrete step 3",
+    "Concrete step 4",
+    "Concrete step 5"
   ]
 }
 
-Be realistic and specific. Provide actual free course URLs from real platforms. Score honestly based on actual skill overlap.`;
+Important rules:
+- The matchScore MUST equal the sum of all scoreBreakdown scores.
+- Extract ALL skills from the resume including those implied by experience descriptions.
+- Handle abbreviations (ML = Machine Learning), synonyms, and misspellings with fuzzy matching.
+- For weakBulletPoints, find 3-5 vague or weak bullet points from the resume that lack metrics or specifics.
+- For careerPaths, suggest 3-5 roles that match the resume skills.
+- For sectionEvaluation, evaluate: Skills, Projects, Work Experience, Education, and Achievements/Certifications.
+- For learningResources, provide 3-5 real free courses per missing skill.
+- For actionPlan, provide 5-7 concrete, prioritized steps.
+- Be realistic, specific, and honest in scoring.`;
 
     const userPrompt = `Analyze this resume against the job description:
 
@@ -93,18 +150,14 @@ Return ONLY the JSON analysis object.`;
     
     if (!content) throw new Error("No response from AI");
 
-    // Parse the JSON from the response, handling potential markdown wrapping
     let parsed;
     try {
-      // Try direct parse first
       parsed = JSON.parse(content);
     } catch {
-      // Try extracting JSON from markdown code blocks
       const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
       if (jsonMatch) {
         parsed = JSON.parse(jsonMatch[1].trim());
       } else {
-        // Try finding JSON object in the text
         const objMatch = content.match(/\{[\s\S]*\}/);
         if (objMatch) {
           parsed = JSON.parse(objMatch[0]);
